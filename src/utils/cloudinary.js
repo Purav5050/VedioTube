@@ -1,5 +1,5 @@
-import {  v2 as cloudinary} from "cloudinary-react";
-import {fs} from "fs";
+import {  v2 as cloudinary} from "cloudinary";
+import fs from "fs";
 
 
 cloudinary.config({ 
@@ -8,7 +8,7 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET 
   });
   
-  const uploadOnCloudinary = async (localFilePath) => {
+  export const uploadOnCloudinary = async (localFilePath) => {
       try {
           if (!localFilePath) return null
           //upload the file on cloudinary
@@ -26,6 +26,20 @@ cloudinary.config({
       }
   }
   
+  export const deleteFromCloudinary = async (imageUrl) => {
+    try {
+        // Extract public ID from the URL
+        const publicId = imageUrl.split('/').pop().split('.')[0];
+
+        // Delete image from Cloudinary
+        const result = await cloudinary.uploader.destroy(publicId);
+
+        if (result.result !== 'ok') {
+            console.warn(`Failed to delete image from Cloudinary: ${imageUrl}`);
+        }
+
+    } catch (error) {
+        console.error('Error deleting image from Cloudinary:', error);
+    }
+}
   
-  
-  export {uploadOnCloudinary}
